@@ -1,0 +1,374 @@
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local VirtualUser = game:GetService("VirtualUser")
+local TeleportService = game:GetService("TeleportService")
+local StarterGui = game:GetService("StarterGui")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LocalPlayer = Players.LocalPlayer
+
+if getconnections then
+	for _, v in pairs(getconnections(LocalPlayer.Idled)) do
+		v:Disable()
+	end
+end
+
+LocalPlayer.Idled:Connect(function()
+	VirtualUser:CaptureController()
+	VirtualUser:ClickButton2(Vector2.new())
+	VirtualUser:Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+	task.wait(1)
+	VirtualUser:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+end)
+
+task.spawn(function()
+	while true do
+		task.wait(60)
+		VirtualUser:CaptureController()
+		VirtualUser:ClickButton2(Vector2.new())
+		VirtualUser:Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+		task.wait(1)
+		VirtualUser:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+	end
+end)
+
+local function checkStaff(u)
+	if u ~= LocalPlayer then
+		if game.CreatorType == Enum.CreatorType.Group then
+			if u:GetRankInGroup(game.CreatorId) > 20 then
+				LocalPlayer:Kick("Staff member detected: " .. u.Name)
+			end
+		elseif u.UserId == game.CreatorId then
+			LocalPlayer:Kick("Creator detected: " .. u.Name)
+		end
+	end
+end
+for _, u in ipairs(Players:GetPlayers()) do
+	checkStaff(u)
+end
+Players.PlayerAdded:Connect(checkStaff)
+
+if CoreGui:FindFirstChild("UGCMenu") then
+	CoreGui.UGCMenu:Destroy()
+end
+
+task.spawn(function()
+	task.wait(2)
+	StarterGui:SetCore("SendNotification", {
+		Title = "Subscribe!",
+		Text = "Subscribe To NyzScript | youtube.com/@Nyz404",
+		Duration = 10,
+	})
+end)
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "UGCMenu"
+ScreenGui.ResetOnSpawn = false
+
+if gethui then
+	ScreenGui.Parent = gethui()
+elseif syn and syn.protect_gui then
+	syn.protect_gui(ScreenGui)
+	ScreenGui.Parent = CoreGui
+else
+	ScreenGui.Parent = CoreGui
+end
+
+local BASE_W = 300
+local BASE_H = 310
+local MIN_W = 160
+local MIN_H = 200
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromHSV(0, 1, 0.08)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -155)
+MainFrame.Size = UDim2.new(0, BASE_W, 0, BASE_H)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.ZIndex = 10
+MainFrame.ClipsDescendants = true
+
+local UICorner_Main = Instance.new("UICorner")
+UICorner_Main.CornerRadius = UDim.new(0, 12)
+UICorner_Main.Parent = MainFrame
+
+local TopBar = Instance.new("Frame")
+TopBar.Parent = MainFrame
+TopBar.BackgroundColor3 = Color3.fromHSV(0, 1, 0.16)
+TopBar.Size = UDim2.new(1, 0, 0, 50)
+TopBar.BorderSizePixel = 0
+TopBar.ZIndex = 10
+
+local UICorner_Top = Instance.new("UICorner")
+UICorner_Top.CornerRadius = UDim.new(0, 12)
+UICorner_Top.Parent = TopBar
+
+local TopBarCover = Instance.new("Frame")
+TopBarCover.Parent = TopBar
+TopBarCover.BackgroundColor3 = Color3.fromHSV(0, 1, 0.16)
+TopBarCover.BorderSizePixel = 0
+TopBarCover.Position = UDim2.new(0, 0, 1, -10)
+TopBarCover.Size = UDim2.new(1, 0, 0, 10)
+TopBarCover.ZIndex = 10
+
+local Logo = Instance.new("ImageLabel")
+Logo.Parent = TopBar
+Logo.BackgroundTransparency = 1
+Logo.Position = UDim2.new(0, -50, 0, 5)
+Logo.Size = UDim2.new(0, 40, 0, 40)
+Logo.Image = "rbxassetid://115813557560542"
+Logo.ScaleType = Enum.ScaleType.Fit
+Logo.ZIndex = 11
+Logo:TweenPosition(UDim2.new(0, 10, 0, 5), Enum.EasingDirection.Out, Enum.EasingStyle.Bounce, 0.8, true)
+
+local Title = Instance.new("TextLabel")
+Title.Parent = TopBar
+Title.BackgroundTransparency = 1
+Title.Position = UDim2.new(0, 60, 0, 0)
+Title.Size = UDim2.new(0, 210, 1, 0)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "Idle UGC Points"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextScaled = true
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.ZIndex = 11
+
+local MinimizeButton = Instance.new("TextButton")
+MinimizeButton.Parent = TopBar
+MinimizeButton.BackgroundColor3 = Color3.fromHSV(0, 1, 0.28)
+MinimizeButton.Position = UDim2.new(1, -38, 0.5, -13)
+MinimizeButton.Size = UDim2.new(0, 26, 0, 26)
+MinimizeButton.Font = Enum.Font.GothamBold
+MinimizeButton.Text = "–"
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.TextSize = 18
+MinimizeButton.ZIndex = 13
+MinimizeButton.AutoButtonColor = false
+
+local UICorner_Min = Instance.new("UICorner")
+UICorner_Min.CornerRadius = UDim.new(0, 6)
+UICorner_Min.Parent = MinimizeButton
+
+local ButtonContainer = Instance.new("Frame")
+ButtonContainer.Parent = MainFrame
+ButtonContainer.Size = UDim2.new(1, 0, 1, -120)
+ButtonContainer.Position = UDim2.new(0, 0, 0, 58)
+ButtonContainer.BackgroundTransparency = 1
+ButtonContainer.ZIndex = 10
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Parent = ButtonContainer
+UIListLayout.Padding = UDim.new(0, 6)
+UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local UIPadding = Instance.new("UIPadding")
+UIPadding.Parent = ButtonContainer
+UIPadding.PaddingTop = UDim.new(0, 8)
+
+local currentHue = 0
+
+local function CreateButton(text)
+	local btn = Instance.new("TextButton")
+	btn.Parent = ButtonContainer
+	btn.BackgroundColor3 = Color3.fromHSV(currentHue, 1, 0.2)
+	btn.Size = UDim2.new(0.85, 0, 0, 40)
+	btn.Font = Enum.Font.Gotham
+	btn.Text = text
+	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	btn.TextSize = 14
+	btn.ZIndex = 11
+	btn.AutoButtonColor = false
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 8)
+	corner.Parent = btn
+	return btn
+end
+
+local BtnPoints = CreateButton("Idle UGC Points")
+local BtnServerHop = CreateButton("Server Hop")
+
+local SliderFrame = Instance.new("Frame")
+SliderFrame.Parent = MainFrame
+SliderFrame.BackgroundTransparency = 1
+SliderFrame.Position = UDim2.new(0.1, 0, 1, -62)
+SliderFrame.Size = UDim2.new(0.8, 0, 0, 50)
+SliderFrame.ZIndex = 11
+
+local SliderLabel = Instance.new("TextLabel")
+SliderLabel.Parent = SliderFrame
+SliderLabel.BackgroundTransparency = 1
+SliderLabel.Size = UDim2.new(1, 0, 0, 20)
+SliderLabel.Font = Enum.Font.GothamBold
+SliderLabel.Text = "GUI Color"
+SliderLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+SliderLabel.TextSize = 14
+SliderLabel.ZIndex = 11
+
+local SliderBar = Instance.new("Frame")
+SliderBar.Parent = SliderFrame
+SliderBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+SliderBar.Position = UDim2.new(0, 0, 0, 30)
+SliderBar.Size = UDim2.new(1, 0, 0, 8)
+SliderBar.ZIndex = 11
+
+local UICorner_Bar = Instance.new("UICorner")
+UICorner_Bar.CornerRadius = UDim.new(1, 0)
+UICorner_Bar.Parent = SliderBar
+
+local SliderKnob = Instance.new("TextButton")
+SliderKnob.Parent = SliderBar
+SliderKnob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+SliderKnob.Position = UDim2.new(0, -10, 0.5, -10)
+SliderKnob.Size = UDim2.new(0, 20, 0, 20)
+SliderKnob.Text = ""
+SliderKnob.ZIndex = 12
+
+local UICorner_Knob = Instance.new("UICorner")
+UICorner_Knob.CornerRadius = UDim.new(1, 0)
+UICorner_Knob.Parent = SliderKnob
+
+local UIGradient = Instance.new("UIGradient")
+UIGradient.Parent = SliderBar
+UIGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromHSV(0, 1, 1)),
+	ColorSequenceKeypoint.new(0.2, Color3.fromHSV(0.2, 1, 1)),
+	ColorSequenceKeypoint.new(0.4, Color3.fromHSV(0.4, 1, 1)),
+	ColorSequenceKeypoint.new(0.6, Color3.fromHSV(0.6, 1, 1)),
+	ColorSequenceKeypoint.new(0.8, Color3.fromHSV(0.8, 1, 1)),
+	ColorSequenceKeypoint.new(1, Color3.fromHSV(1, 1, 1)),
+})
+
+local ResizeHandle = Instance.new("TextButton")
+ResizeHandle.Parent = MainFrame
+ResizeHandle.Size = UDim2.new(0, 24, 0, 24)
+ResizeHandle.Position = UDim2.new(1, -24, 1, -24)
+ResizeHandle.BackgroundTransparency = 1
+ResizeHandle.Text = ""
+ResizeHandle.ZIndex = 20
+ResizeHandle.AutoButtonColor = false
+ResizeHandle.Active = true
+
+local PointsToggle = false
+local dragging = false
+local resizing = false
+local isMinimized = false
+local ActiveColor = Color3.fromRGB(0, 155, 0)
+
+local function UpdateColor(hue)
+	currentHue = hue
+	MainFrame.BackgroundColor3 = Color3.fromHSV(hue, 1, 0.08)
+	TopBar.BackgroundColor3 = Color3.fromHSV(hue, 1, 0.16)
+	TopBarCover.BackgroundColor3 = Color3.fromHSV(hue, 1, 0.16)
+	MinimizeButton.BackgroundColor3 = Color3.fromHSV(hue, 1, 0.28)
+	local baseColor = Color3.fromHSV(hue, 1, 0.2)
+	if not PointsToggle then BtnPoints.BackgroundColor3 = baseColor end
+	BtnServerHop.BackgroundColor3 = baseColor
+end
+
+local function getInput()
+	return UserInputService:GetMouseLocation()
+end
+
+local resizeStartMouse = Vector2.new()
+local resizeStartSize = Vector2.new()
+
+ResizeHandle.MouseButton1Down:Connect(function()
+	resizing = true
+	MainFrame.Draggable = false
+	resizeStartMouse = getInput()
+	resizeStartSize = Vector2.new(MainFrame.AbsoluteSize.X, MainFrame.AbsoluteSize.Y)
+end)
+
+ResizeHandle.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.Touch then
+		resizing = true
+		MainFrame.Draggable = false
+		resizeStartMouse = Vector2.new(input.Position.X, input.Position.Y)
+		resizeStartSize = Vector2.new(MainFrame.AbsoluteSize.X, MainFrame.AbsoluteSize.Y)
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		if resizing then
+			resizing = false
+			MainFrame.Draggable = true
+		end
+		dragging = false
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if resizing and input.UserInputType == Enum.UserInputType.Touch then
+		local delta = Vector2.new(input.Position.X, input.Position.Y) - resizeStartMouse
+		local newW = math.max(MIN_W, resizeStartSize.X + delta.X)
+		local newH = math.max(MIN_H, resizeStartSize.Y + delta.Y)
+		MainFrame.Size = UDim2.new(0, newW, 0, newH)
+	end
+end)
+
+MinimizeButton.MouseButton1Click:Connect(function()
+	isMinimized = not isMinimized
+	if isMinimized then
+		ButtonContainer.Visible = false
+		SliderFrame.Visible = false
+		ResizeHandle.Visible = false
+		MainFrame.Size = UDim2.new(0, MainFrame.AbsoluteSize.X, 0, 50)
+		TopBarCover.Visible = false
+		MinimizeButton.Text = "+"
+	else
+		ButtonContainer.Visible = true
+		SliderFrame.Visible = true
+		ResizeHandle.Visible = true
+		MainFrame.Size = UDim2.new(0, MainFrame.AbsoluteSize.X, 0, BASE_H)
+		TopBarCover.Visible = true
+		MinimizeButton.Text = "–"
+	end
+end)
+
+SliderKnob.MouseButton1Down:Connect(function()
+	dragging = true
+end)
+
+RunService.RenderStepped:Connect(function()
+	if dragging then
+		local mousePos = UserInputService:GetMouseLocation().X
+		local sliderPos = SliderBar.AbsolutePosition.X
+		local sliderSize = SliderBar.AbsoluteSize.X
+		local rel = math.clamp((mousePos - sliderPos) / sliderSize, 0, 1)
+		SliderKnob.Position = UDim2.new(rel, -10, 0.5, -10)
+		UpdateColor(rel)
+	end
+	if resizing then
+		local mouseNow = getInput()
+		local delta = mouseNow - resizeStartMouse
+		local newW = math.max(MIN_W, resizeStartSize.X + delta.X)
+		local newH = math.max(MIN_H, resizeStartSize.Y + delta.Y)
+		if not isMinimized then
+			MainFrame.Size = UDim2.new(0, newW, 0, newH)
+		end
+	end
+end)
+
+BtnPoints.MouseButton1Click:Connect(function()
+	PointsToggle = not PointsToggle
+	BtnPoints.BackgroundColor3 = PointsToggle and ActiveColor or Color3.fromHSV(currentHue, 1, 0.2)
+end)
+
+BtnServerHop.MouseButton1Click:Connect(function()
+	TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+end)
+
+task.spawn(function()
+	while true do
+		task.wait(0.1)
+		if PointsToggle then
+			pcall(function()
+				ReplicatedStorage["TestCreatorReward"]:FireServer()
+			end)
+		end
+	end
+end)
